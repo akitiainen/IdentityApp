@@ -8,21 +8,44 @@ namespace IdentityApp
 {
     class StringHandler
     {
-        private string _uriString = "visma-identity://confirm?source=netvisor&paymentnumber=102226";
-
-        public void ParseURI()
+        
+        public string[] ParseURI(string uriString)
         {
-            var URIScheme = _uriString.Split(':');
-            Console.WriteLine(URIScheme[0]);
+            var URIScheme = uriString.Split(':');
+            Console.WriteLine("scheme: " + URIScheme[0]);
+            if (URIScheme[0].ToLower() != "visma-identity")
+            {
+                throw new Exception("URI scheme not correct");
+            }
             var URIAction = URIScheme[1].Split('?');
-            Console.WriteLine(URIAction[0]);
-            var UriParameters = URIAction[1].Split('=');
-            Console.WriteLine(UriParameters[1]);
+            URIAction[0] = URIAction[0].TrimStart('/');
+            if(URIAction[0].ToLower() != "login" && URIAction[0].ToLower() != "confirm" && URIAction[0].ToLower() != "sign")
+            {
+                throw new Exception($"URI Action '{URIAction[0]}' not allowed");
+            }
+
+            return URIAction;
+
         }
 
-        public void ValidateURI()
+        public void LoginAction(string source)
         {
+            Console.WriteLine("login action completed");
+            Console.WriteLine(source);
+        }
 
+        public string ConfirmAction(string source, string paymentNumber)
+        {
+            Console.WriteLine("Confirm action completed");
+            Console.WriteLine(source);
+            return paymentNumber;
+        }
+        public Guid SignAction(string source, string documentId)
+        {
+            Guid guid = Guid.Parse(documentId);
+            Console.WriteLine("Sign action completed");
+            Console.WriteLine(source);
+            return guid;
         }
     }
 }
