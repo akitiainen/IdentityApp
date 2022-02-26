@@ -6,14 +6,12 @@ namespace IdentityApp
     {
         static void Main(string[] args)
         {
-            string uriString = "visma-identity://confirm?source=netvisor&paymentnumber=102226";
-            string uriString2 = "visma-identity://login?source=severa";
-            string uriString3 = "visma-identity://sign?source=vismasign&documentid=47ed9186-2ba0-4e8b-b9e2-7123575fdd5b";
+            string uriString = UserInterface();
 
             StringHandler stringHandler = new StringHandler();
             try
             {
-                stringHandler.ParseURI(uriString2);
+                stringHandler.ParseURI(uriString);
                 switch (stringHandler.URIAction)
                 {
                     case "login":
@@ -34,6 +32,33 @@ namespace IdentityApp
 
                 throw;
             }
+        }
+
+        static string UserInterface()
+        {
+            string netvisor = "visma-identity://confirm?source=netvisor&paymentnumber=102226";
+            string severa = "visma-identity://login?source=severa";
+            string sign = "visma-identity://sign?source=vismasign&documentid=47ed9186-2ba0-4e8b-b9e2-7123575fdd5b";
+
+            Console.WriteLine("[1] Visma Severa");
+            Console.WriteLine("[2] Severa");
+            Console.WriteLine("[3] Visma Sign");
+            Console.WriteLine("\n[Esc] Exit");
+
+            do
+            {
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.D1:
+                        return severa;
+                    case ConsoleKey.D2:
+                        return netvisor;
+                    case ConsoleKey.D3:
+                        return sign;
+                }
+            } while (Console.ReadKey().Key != ConsoleKey.Escape);
+            Environment.Exit(0);
+            return null;
         }
     }
 }

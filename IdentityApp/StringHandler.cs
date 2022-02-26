@@ -25,7 +25,7 @@ namespace IdentityApp
             {
                 throw new Exception($"URI Action '{URIAction}' not allowed");
             }
-            Console.WriteLine(URIAction);
+
             URIParameters = tmpActionString[1].Split('&');
             URIParameters[0] = URIParameters[0].Substring(7);
             if(URIAction.ToLower() == "confirm")
@@ -36,23 +36,23 @@ namespace IdentityApp
             {
                 URIParameters[1] = URIParameters[1].Substring(11);
             }
+            Console.WriteLine($"\nAction: {URIAction}");
         }
 
         public string LoginAction()
         {
-            Console.WriteLine("login action completed");
             return URIAction;
         }
 
         public string ConfirmAction()
         {
-            Console.WriteLine("Confirm action completed");
+            Console.WriteLine($"Parameter value: {URIParameters[1]}");
             return URIParameters[1];
         }
         public Guid SignAction()
         {
             Guid guid = Guid.Parse(URIParameters[1]);
-            Console.WriteLine("Sign action completed");
+            Console.WriteLine($"Parameter value: {URIParameters[1]}");
             return guid;
         }
     }
