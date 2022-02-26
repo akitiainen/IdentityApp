@@ -8,43 +8,51 @@ namespace IdentityApp
 {
     class StringHandler
     {
-        
-        public string[] ParseURI(string uriString)
+        public string URIScheme;
+        public string URIAction;
+        public string[] URIParameters;
+        public void ParseURI(string uriString)
         {
-            var URIScheme = uriString.Split(':');
-            Console.WriteLine("scheme: " + URIScheme[0]);
-            if (URIScheme[0].ToLower() != "visma-identity")
+            var tmpUriString = uriString.Split(':');
+            URIScheme = tmpUriString[0];
+            if (URIScheme.ToLower() != "visma-identity")
             {
                 throw new Exception("URI scheme not correct");
             }
-            var URIAction = URIScheme[1].Split('?');
-            URIAction[0] = URIAction[0].TrimStart('/');
-            if(URIAction[0].ToLower() != "login" && URIAction[0].ToLower() != "confirm" && URIAction[0].ToLower() != "sign")
+            var tmpActionString = tmpUriString[1].Split('?');
+            URIAction = tmpActionString[0].TrimStart('/');
+            if(URIAction.ToLower() != "login" && URIAction.ToLower() != "confirm" && URIAction.ToLower() != "sign")
             {
-                throw new Exception($"URI Action '{URIAction[0]}' not allowed");
+                throw new Exception($"URI Action '{URIAction}' not allowed");
             }
-
-            return URIAction;
-
+            Console.WriteLine(URIAction);
+            URIParameters = tmpActionString[1].Split('&');
+            URIParameters[0] = URIParameters[0].Substring(7);
+            if(URIAction.ToLower() == "confirm")
+            {
+                URIParameters[1] = URIParameters[1].Substring(14);
+            }
+            if(URIAction.ToLower() == "sign")
+            {
+                URIParameters[1] = URIParameters[1].Substring(11);
+            }
         }
 
-        public void LoginAction(string source)
+        public string LoginAction()
         {
             Console.WriteLine("login action completed");
-            Console.WriteLine(source);
+            return URIAction;
         }
 
-        public string ConfirmAction(string source, string paymentNumber)
+        public string ConfirmAction()
         {
             Console.WriteLine("Confirm action completed");
-            Console.WriteLine(source);
-            return paymentNumber;
+            return URIParameters[1];
         }
-        public Guid SignAction(string source, string documentId)
+        public Guid SignAction()
         {
-            Guid guid = Guid.Parse(documentId);
+            Guid guid = Guid.Parse(URIParameters[1]);
             Console.WriteLine("Sign action completed");
-            Console.WriteLine(source);
             return guid;
         }
     }

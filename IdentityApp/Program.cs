@@ -13,8 +13,21 @@ namespace IdentityApp
             StringHandler stringHandler = new StringHandler();
             try
             {
-                var emt = stringHandler.ParseURI(uriString3);
-                Console.WriteLine(emt[0], emt[1]);
+                stringHandler.ParseURI(uriString2);
+                switch (stringHandler.URIAction)
+                {
+                    case "login":
+                        stringHandler.LoginAction();
+                        break;
+                    case "confirm":
+                        stringHandler.ConfirmAction();
+                        break;
+                    case "sign":
+                        stringHandler.SignAction();
+                        break;
+                    default:
+                        break;
+                }
             }
             catch (Exception)
             {
