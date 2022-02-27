@@ -41,7 +41,7 @@ namespace IdentityApp
             string sign = "visma-identity://sign?source=vismasign&documentid=47ed9186-2ba0-4e8b-b9e2-7123575fdd5b";
 
             Console.WriteLine("[1] Visma Severa");
-            Console.WriteLine("[2] Severa");
+            Console.WriteLine("[2] Netvisor");
             Console.WriteLine("[3] Visma Sign");
             Console.WriteLine("\n[Esc] Exit");
 

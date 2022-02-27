@@ -14,29 +14,66 @@ namespace IdentityApp
         public void ParseURI(string uriString)
         {
             var tmpUriString = uriString.Split(':');
-            URIScheme = tmpUriString[0];
-            if (URIScheme.ToLower() != "visma-identity")
+            URIScheme = ValidateScheme(tmpUriString[0].ToLower());
+
+            var tmpActionString = tmpUriString[1].Split('?');
+            tmpActionString[0] = tmpActionString[0].TrimStart('/').ToLower();
+            URIAction = ValidateAction(tmpActionString[0]);
+
+            var tmpParameterStrings = tmpActionString[1].Split('&');
+            tmpParameterStrings[0] = tmpParameterStrings[0].Substring(7);
+            
+            ValidateParameters(URIAction, tmpParameterStrings);
+
+            Console.WriteLine($"\nAction: {URIAction}");
+        }
+
+        public string ValidateScheme(string scheme)
+        {
+            if (scheme != "visma-identity")
             {
                 throw new Exception("URI scheme not correct");
             }
-            var tmpActionString = tmpUriString[1].Split('?');
-            URIAction = tmpActionString[0].TrimStart('/');
-            if(URIAction.ToLower() != "login" && URIAction.ToLower() != "confirm" && URIAction.ToLower() != "sign")
-            {
-                throw new Exception($"URI Action '{URIAction}' not allowed");
-            }
+            return scheme;
+        }
 
-            URIParameters = tmpActionString[1].Split('&');
-            URIParameters[0] = URIParameters[0].Substring(7);
-            if(URIAction.ToLower() == "confirm")
+        public string ValidateAction(string action)
+        {
+            if (action != "login" && action != "confirm" && action != "sign")
             {
-                URIParameters[1] = URIParameters[1].Substring(14);
+                throw new Exception($"URI Action '{action}' not allowed");
             }
-            if(URIAction.ToLower() == "sign")
+            return action;
+        }
+
+        public void ValidateParameters(string action, string[] parameters)
+        {
+            if(action == "login")
             {
-                URIParameters[1] = URIParameters[1].Substring(11);
+                if (parameters[0] == "severa")
+                {
+                    return;
+                }
             }
-            Console.WriteLine($"\nAction: {URIAction}");
+            if(action == "confirm")
+            {
+                var parameterKey = parameters[1].Split('=');
+                if (parameters[0] == "netvisor" && parameterKey[0] == "paymentnumber")
+                {
+                    URIParameters = parameterKey;
+                    return;
+                }
+            }
+            if(action == "sign")
+            {
+                var parameterKey = parameters[1].Split('=');
+                if (parameters[0] == "vismasign" && parameterKey[0] == "documentid")
+                {
+                    URIParameters = parameterKey;
+                    return;
+                }
+            }
+            throw new Exception($"Parameters {parameters} for requested action are invalid");
         }
 
         public string LoginAction()
